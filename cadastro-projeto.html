@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostra+ | Cadastrar / Editar Projeto</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .upload-dropzone {
+      border: 2px dashed var(--una-border-pink, #F3D3E0);
+      background-color: var(--una-light, #FDF0F5);
+      border-radius: 0.65rem;
+      padding: 0.6rem 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .upload-dropzone:hover {
+      border-color: var(--una-primary, #6A005B);
+      background-color: #FAF0F7;
+      transform: translateY(-1px);
+    }
+
+    .upload-icon {
+      font-size: 1.1rem;
+      color: var(--una-primary, #6A005B);
+    }
+
+    .upload-text {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--una-vinho, #3B0033);
+    }
+
+    .upload-subtext {
+      font-size: 0.65rem;
+      color: var(--text-muted, #666);
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+  </style>
+
+  <script>
+    (function verificarSessaoAluno() {
+      const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+      if (!usuario || usuario.perfil !== 'aluno') {
+        alert('Acesso restrito a alunos!');
+        window.location.href = 'login.html';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <header class="header-sticky">
+      <a href="index.html" class="brand-logo">Mostra<span>+</span></a>
+      <a href="perfil-aluno.html" style="font-size: 0.75rem; color: var(--una-primary); text-decoration: none; font-weight: 600;">← Meus Projetos</a>
+    </header>
+
+    <div class="hero-banner">
+      <h1 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;" id="titulo-pagina">Submissão de Projeto</h1>
+      <p style="font-size: 0.75rem; opacity: 0.9;">Preencha os detalhes do seu trabalho e anexe as imagens dos seus arquivos.</p>
+    </div>
+
+    <main style="padding: 1.25rem 1rem;">
+      <form id="form-projeto" onsubmit="submeterProjeto(event)">
+        <input type="hidden" id="projeto-id">
+
+        <div class="form-group">
+          <label class="form-label">Título do Projeto *</label>
+          <input type="text" id="input-titulo" class="form-input" required placeholder="Ex: Sistema de Gestão Acadêmica">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Área / Categoria do Projeto *</label>
+          <select id="input-categoria" class="form-select" required onchange="verificarOpcaoOutro()">
+            <option value="">Selecione uma área...</option>
+            <optgroup label="Tecnologia & Computação">
+              <option value="Desenvolvimento Web">Desenvolvimento Web</option>
+              <option value="Aplicativos Móveis">Aplicativos Móveis</option>
+              <option value="Inteligência Artificial">Inteligência Artificial & Ciência de Dados</option>
+              <option value="Banco de Dados">Banco de Dados</option>
+              <option value="Redes e Segurança">Redes, Infraestrutura & Cibersegurança</option>
+              <option value="Jogos & Realidade Virtual">Jogos & Realidade Virtual</option>
+            </optgroup>
+            <optgroup label="Engenharias & Arquitetura">
+              <option value="Engenharia de Software">Engenharia de Software</option>
+              <option value="Engenharia Civil & Construção">Engenharia Civil & Construção</option>
+              <option value="Engenharia Elétrica & Automação">Engenharia Elétrica, Robótica & Automação</option>
+              <option value="Arquitetura & Urbanismo">Arquitetura & Urbanismo</option>
+            </optgroup>
+            <optgroup label="Saúde & Biológicas">
+              <option value="Saúde & Enfermagem">Saúde, Medicina & Enfermagem</option>
+              <option value="Psicologia & Nutrição">Psicologia, Nutrição & Fisioterapia</option>
+              <option value="Biotecnologia">Biotecnologia & Ciências Biológicas</option>
+            </optgroup>
+            <optgroup label="Negócios, Comunicação & Humanas">
+              <option value="Administração & Negócios">Administração, Gestão & Empreendedorismo</option>
+              <option value="Marketing & Comunicação">Marketing, Publicidade & Comunicação</option>
+              <option value="Design & UX/UI">Design de Produto & UX/UI</option>
+              <option value="Direito & Sociedade">Direito & Ciências Sociais</option>
+              <option value="Educação & Licenciaturas">Educação & Licenciaturas</option>
+            </optgroup>
+            <option value="Outro">Outro (Especifique a sua área)...</option>
+          </select>
+
+          <div id="container-outra-categoria" style="display: none; margin-top: 0.5rem;">
+            <input type="text" id="input-outra-categoria" class="form-input" placeholder="Digite o nome da sua área ou curso (ex: Mecatrônica)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Autores / Participantes *</label>
+          <input type="text" id="input-autores" class="form-input" required placeholder="Ex: Ana Carolina, João Silva">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Logo / Imagem de Capa</label>
+          <label for="input-file-logo" class="upload-dropzone">
+            <span class="upload-icon">🖼️</span>
+            <div>
+              <span class="upload-text">Selecionar Logo</span>
+              <span class="upload-subtext" style="display: block;">PNG, JPG ou WEBP (Max 5MB)</span>
+            </div>
+          </label>
+          <input type="file" id="input-file-logo" accept="image/*" class="file-input-hidden" onchange="carregarLogoArquivo(event)">
+          <div id="preview-logo-container" style="margin-top: 0.5rem;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Galeria de Imagens do Projeto</label>
+          <label for="input-file-galeria" class="upload-dropzone">
+            <span class="upload-icon">📁</span>
+            <div>
+              <span class="upload-text">Anexar imagens da galeria</span>
+              <span class="upload-subtext" style="display: block;">Múltiplos arquivos permitidos</span>
+            </div>
+          </label>
+          <input type="file" id="input-file-galeria" accept="image/*" multiple class="file-input-hidden" onchange="carregarImagensGaleria(event)">
+          <div id="galeria-preview-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descrição do Projeto (Máx: 500 caracteres) *</label>
+          <textarea id="input-descricao" class="form-textarea" rows="4" maxlength="500" required placeholder="Descreva o objetivo e funcionamento do projeto..."></textarea>
+          <div style="font-size: 0.65rem; color: var(--text-muted); text-align: right; margin-top: 0.2rem;">
+            <span id="contador-caracteres">500</span> caracteres restantes
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">E-mail de Contato *</label>
+          <input type="email" id="input-email" class="form-input" required placeholder="seu.email@aluno.una.br">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Link do Repositório ou Site ↗</label>
+          <input type="url" id="input-link" class="form-input" placeholder="https://github.com/seu-usuario/projeto">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">E-mail do Professor Responsável (Para notificação) *</label>
+          <input type="email" id="input-email-professor" class="form-input" required placeholder="professor@una.br">
+        </div>
+
+        <button type="submit" class="btn-submit">Salvar e Enviar para Avaliação</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    let logoBase64 = '';
+    let imagensDetalhadasArray = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const textarea = document.getElementById('input-descricao');
+      const contador = document.getElementById('contador-caracteres');
+      
+      textarea.addEventListener('input', () => {
+        contador.textContent = 500 - textarea.value.length;
+      });
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const idEdicao = urlParams.get('id');
+      if (idEdicao) {
+        document.getElementById('titulo-pagina').textContent = 'Editar Projeto';
+        carregarDadosEdicao(idEdicao);
+      }
+    });
+
+    function verificarOpcaoOutro() {
+      const select = document.getElementById('input-categoria');
+      const containerOutro = document.getElementById('container-outra-categoria');
+      const inputOutro = document.getElementById('input-outra-categoria');
+
+      if (select.value === 'Outro') {
+        containerOutro.style.display = 'block';
+        inputOutro.setAttribute('required', 'required');
+      } else {
+        containerOutro.style.display = 'none';
+        inputOutro.removeAttribute('required');
+        inputOutro.value = '';
+      }
+    }
+
+    function carregarLogoArquivo(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        logoBase64 = e.target.result;
+        renderizarPreviewLogo();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removerLogo() {
+      logoBase64 = '';
+      document.getElementById('input-file-logo').value = '';
+      renderizarPreviewLogo();
+    }
+
+    function renderizarPreviewLogo() {
+      const container = document.getElementById('preview-logo-container');
+      if (logoBase64) {
+        container.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--una-light, #FDF0F5); padding: 0.5rem 0.7rem; border-radius: 0.5rem; border: 1px solid var(--una-border-pink, #F3D3E0);">
+            <img src="${logoBase64}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 0.3rem; border: 1px solid #E2E8F0;" />
+            <span style="font-size: 0.72rem; color: var(--una-vinho, #3B0033); font-weight: 700;">Logo carregada</span>
+            <button type="button" onclick="removerLogo()" style="margin-left: auto; background: #EF4444; color: #FFF; border: none; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.68rem; font-weight: 700; cursor: pointer;">Remover ✕</button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = '';
+      }
+    }
+
+    function carregarImagensGaleria(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+
+      let carregados = 0;
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagensDetalhadasArray.push({ url: e.target.result, legenda: file.name });
+          carregados++;
+          if (carregados === files.length) {
+            renderizarGaleriaPreview();
+            document.getElementById('input-file-galeria').value = '';
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removerImagemGaleria(index) {
+      imagensDetalhadasArray.splice(index, 1);
+      renderizarGaleriaPreview();
+    }
+
+    function renderizarGaleriaPreview() {
+      const container = document.getElementById('galeria-preview-container');
+      if (imagensDetalhadasArray.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = imagensDetalhadasArray.map((img, index) => `
+        <div style="background: var(--una-light, #FDF0F5); padding: 0.4rem 0.7rem; border-radius: 0.5rem; border: 1px solid var(--una-border-pink, #F3D3E0); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <img src="${img.url}" style="width: 36px; height: 36px; object-fit: cover; border-radius: 0.3rem; border: 1px solid #E2E8F0;" />
+            <span style="font-size: 0.7rem; color: var(--text-main, #222); font-weight: 600; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${img.legenda || 'Imagem ' + (index + 1)}</span>
+          </div>
+          <button type="button" onclick="removerImagemGaleria(${index})" style="background: #EF4444; color: #FFF; border: none; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.68rem; font-weight: 700; cursor: pointer;">Excluir ✕</button>
+        </div>
+      `).join('');
+    }
+
+    function carregarDadosEdicao(id) {
+      const lista = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      const projeto = lista.find(p => String(p.id) === String(id));
+
+      if (projeto) {
+        document.getElementById('projeto-id').value = projeto.id;
+        document.getElementById('input-titulo').value = projeto.titulo || '';
+        document.getElementById('input-autores').value = projeto.participantes || '';
+        document.getElementById('input-descricao').value = projeto.descricao || '';
+        document.getElementById('input-email').value = projeto.emailContato || '';
+        document.getElementById('input-link').value = projeto.linkSite || '';
+        document.getElementById('input-email-professor').value = projeto.emailProfessor || '';
+
+        const select = document.getElementById('input-categoria');
+        const opcoesExistentes = Array.from(select.options).map(o => o.value);
+
+        if (opcoesExistentes.includes(projeto.categoria)) {
+          select.value = projeto.categoria;
+        } else if (projeto.categoria) {
+          select.value = 'Outro';
+          verificarOpcaoOutro();
+          document.getElementById('input-outra-categoria').value = projeto.categoria;
+        }
+
+        const textarea = document.getElementById('input-descricao');
+        document.getElementById('contador-caracteres').textContent = 500 - textarea.value.length;
+
+        if (projeto.logo) {
+          logoBase64 = projeto.logo;
+          renderizarPreviewLogo();
+        }
+
+        if (projeto.imagensDetalhadas && Array.isArray(projeto.imagensDetalhadas)) {
+          imagensDetalhadasArray = [...projeto.imagensDetalhadas];
+        } else if (projeto.imagens && Array.isArray(projeto.imagens)) {
+          imagensDetalhadasArray = projeto.imagens.map(i => ({ url: i, legenda: 'Imagem' }));
+        }
+        renderizarGaleriaPreview();
+      }
+    }
+
+    function submeterProjeto(event) {
+      event.preventDefault();
+
+      const selectCategoria = document.getElementById('input-categoria');
+      let categoriaFinal = selectCategoria.value;
+
+      if (categoriaFinal === 'Outro') {
+        categoriaFinal = document.getElementById('input-outra-categoria').value.trim() || 'Geral';
+      }
+
+      const emailProfessor = document.getElementById('input-email-professor').value.trim().toLowerCase();
+      const idExistente = document.getElementById('projeto-id').value;
+      const tituloProjeto = document.getElementById('input-titulo').value;
+
+      const novoProjeto = {
+        id: idExistente ? Number(idExistente) : Date.now(),
+        titulo: tituloProjeto,
+        categoria: categoriaFinal,
+        participantes: document.getElementById('input-autores').value,
+        logo: logoBase64,
+        imagensDetalhadas: imagensDetalhadasArray,
+        descricao: document.getElementById('input-descricao').value,
+        emailContato: document.getElementById('input-email').value,
+        linkSite: document.getElementById('input-link').value,
+        emailProfessor: emailProfessor,
+        dataSubmissao: new Date().toLocaleDateString('pt-BR'),
+        status: 'Pendente'
+      };
+
+      let listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      let ehEdicao = false;
+
+      if (idExistente) {
+        const index = listaProjetos.findIndex(p => String(p.id) === String(idExistente));
+        if (index !== -1) {
+          const projetoAntigo = listaProjetos[index];
+          ehEdicao = true;
+          
+          if (projetoAntigo.status === 'Aprovado' || projetoAntigo.status === 'Reprovado') {
+            novoProjeto.status = 'Pendente';
+          }
+
+          listaProjetos[index] = { ...projetoAntigo, ...novoProjeto };
+        }
+      } else {
+        listaProjetos.push(novoProjeto);
+      }
+
+      localStorage.setItem('projetosMostraPlus', JSON.stringify(listaProjetos));
+
+      if (emailProfessor) {
+        let notificacoes = JSON.parse(localStorage.getItem('notificacoesMostraPlus')) || [];
+        const dataHoraAtual = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        
+        notificacoes.unshift({
+          id: Date.now(),
+          tipo: 'novo_projeto',
+          emailDestinatario: emailProfessor,
+          projetoId: novoProjeto.id,
+          tituloProjeto: tituloProjeto,
+          autorComentario: 'Sistema Acadêmico',
+          comentarioTexto: ehEdicao 
+            ? `O projeto "${tituloProjeto}" foi alterado e aguarda reavaliação.` 
+            : `Um novo projeto "${tituloProjeto}" foi submetido e aguarda sua avaliação.`,
+          data: dataHoraAtual,
+          lida: false
+        });
+        localStorage.setItem('notificacoesMostraPlus', JSON.stringify(notificacoes));
+      }
+
+      alert('Projeto salvo e enviado para avaliação com sucesso!');
+      window.location.href = 'perfil-aluno.html';
+    }
+  </script>
+</body>
+</html>

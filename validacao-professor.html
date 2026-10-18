@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostra+ | Validação do Professor</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .header-actions-docente {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Navegação por Abas Principais */
+    .nav-tabs-main {
+      display: flex;
+      gap: 0.5rem;
+      background: #F1F5F9;
+      padding: 0.35rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .tab-btn-main {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: transparent;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-muted, #666);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      text-align: center;
+    }
+
+    .tab-btn-main.active {
+      background: #FFFFFF;
+      color: var(--una-primary, #6A005B);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* Cartão do Perfil do Professor */
+    .profile-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .profile-avatar-lg {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--una-primary, #6A005B);
+      background-color: var(--una-light, #FDF0F5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--una-primary, #6A005B);
+      font-weight: 800;
+      margin: 0 auto 0.75rem auto;
+      overflow: hidden;
+    }
+
+    .author-card-clickable {
+      background: var(--una-light, #FDF0F5);
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      border-radius: 0.85rem;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .author-card-clickable:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106, 0, 91, 0.08);
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--una-primary, #6A005B);
+      background: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--una-primary, #6A005B);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .social-links-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .social-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.8rem;
+      border-radius: 2rem;
+      text-decoration: none;
+      background: var(--una-light, #FDF0F5);
+      color: var(--una-primary, #6A005B);
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+    }
+
+    /* Botão de upload compactado */
+    .upload-dropzone {
+      border: 2px dashed var(--una-border-pink, #F3D3E0);
+      background-color: var(--una-light, #FDF0F5);
+      border-radius: 0.65rem;
+      padding: 0.5rem 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .upload-dropzone:hover {
+      border-color: var(--una-primary, #6A005B);
+      background-color: #FAF0F7;
+      transform: translateY(-1px);
+    }
+
+    .upload-icon {
+      font-size: 1.1rem;
+      color: var(--una-primary, #6A005B);
+    }
+
+    .upload-text {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--una-vinho, #3B0033);
+    }
+
+    .upload-subtext {
+      font-size: 0.65rem;
+      color: var(--text-muted, #666);
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .page-btn {
+      background: var(--una-light, #FDF0F5);
+      color: var(--una-primary, #6A005B);
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #F1F5F9;
+      color: #94A3B8;
+      border-color: #E2E8F0;
+    }
+
+    .page-number-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: #FFF;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-number-btn.active {
+      background: var(--una-primary, #6A005B);
+      color: #FFF;
+      border-color: var(--una-primary, #6A005B);
+    }
+
+    .image-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .image-modal-content {
+      max-width: 90%;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .image-modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      color: #FFFFFF;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.6);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 1 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-sizing: border-box;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: background 0.2s, transform 0.2s;
+      user-select: none;
+    }
+
+    .image-modal-close:hover {
+      background: #EF4444;
+      transform: scale(1.05);
+    }
+
+    .thumb-hover {
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .thumb-hover:hover {
+      transform: scale(1.03);
+      border-color: var(--una-primary, #6A005B) !important;
+    }
+  </style>
+
+  <script>
+    (function verificarSessaoProfessor() {
+      const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+      if (!usuario || usuario.perfil !== 'professor') {
+        alert('Acesso restrito a professores!');
+        window.location.href = 'login.html';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <header class="header-sticky">
+      <a href="index.html" class="brand-logo">Mostra<span>+</span></a>
+      
+      <div class="header-actions-docente">
+        <a href="index.html" class="filter-btn" style="background: var(--una-light); color: var(--una-primary); border: 1px solid var(--una-border-pink); text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-weight: 700; display: inline-flex; align-items: center;">
+          ← Vitrine
+        </a>
+        <button onclick="sairDaConta()" class="filter-btn" style="background: #530606; color: #FFF; border: none; padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 0.5rem; font-weight: 700;">
+          Sair 
+        </button>
+      </div>
+    </header>
+
+    <div class="hero-banner">
+      <h1 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">Painel Docente</h1>
+      <p style="font-size: 0.75rem; opacity: 0.9;">Faça a curadoria de projetos e gerencie o seu perfil acadêmico.</p>
+    </div>
+
+    <main style="padding: 1.25rem 1rem;">
+      
+      <!-- BOTÕES DE NAVEGAÇÃO -->
+      <div class="nav-tabs-main">
+        <button id="btn-tab-avaliacao" class="tab-btn-main active" onclick="mudarAba('avaliacao')">📋 Avaliação de Projetos</button>
+        <button id="btn-tab-perfil" class="tab-btn-main" onclick="mudarAba('perfil')">👤 Meu Perfil</button>
+      </div>
+
+      <!-- ================= ABA 1: AVALIAÇÃO DE PROJETOS ================= -->
+      <section id="secao-avaliacao">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+          <div>
+            <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--una-vinho);">Projetos Pendentes</h2>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Avalie e aprove trabalhos para publicação.</p>
+          </div>
+          <span id="contador-progresso" style="font-size: 0.72rem; font-weight: 800; color: var(--una-primary); background: var(--una-light); padding: 0.25rem 0.6rem; border-radius: 1rem; border: 1px solid var(--una-border-pink);">
+            0 de 0
+          </span>
+        </div>
+
+        <div id="lista-pendentes-container">
+          <!-- Projeto renderizado via JS -->
+        </div>
+
+        <!-- BARRA DE PAGINAÇÃO -->
+        <div id="bar-paginacao" class="pagination-bar" style="display: none;">
+          <button id="btn-page-prev" class="page-btn" onclick="mudarPagina(-1)">← Anterior</button>
+          <div id="numeros-paginas" style="display: flex; gap: 0.3rem;"></div>
+          <button id="btn-page-next" class="page-btn" onclick="mudarPagina(1)">Próximo →</button>
+        </div>
+      </section>
+
+      <!-- ================= ABA 2: PERFIL DO PROFESSOR ================= -->
+      <section id="secao-perfil" style="display: none;">
+        <div class="profile-card">
+          <div style="text-align: center;">
+            <div id="avatar-display" class="profile-avatar-lg">PR</div>
+            <h2 id="exibir-nome" style="font-size: 1.15rem; font-weight: 800; color: var(--una-vinho, #3B0033); margin-bottom: 0.1rem;">Professor</h2>
+            <p id="exibir-email" style="font-size: 0.75rem; color: var(--text-muted, #666); margin-bottom: 0.5rem;">professor@una.br</p>
+            <span class="badge-tag" style="background: #FDF0F5; color: var(--una-primary); border-color: var(--una-border-pink);">Curadoria Docente</span>
+          </div>
+
+          <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+            <strong style="font-size: 0.8rem; color: var(--una-vinho);">Sobre Mim / Biografia:</strong>
+            <p id="exibir-bio" style="font-size: 0.78rem; color: #444; margin-top: 0.3rem; line-height: 1.4;">
+              Nenhuma biografia adicionada ainda.
+            </p>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <strong style="font-size: 0.8rem; color: var(--una-vinho); display: block; text-align: center;">Redes & Links Profissionais:</strong>
+            <div id="exibir-redes" class="social-links-list"></div>
+          </div>
+        </div>
+
+        <div style="background: #FFF; border: 1px solid var(--border-color); border-radius: 1rem; padding: 1.25rem; margin-top: 1.25rem;">
+          <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--una-vinho); margin-bottom: 1rem;">Editar Informações do Perfil </h3>
+
+          <div class="form-group">
+            <label class="form-label">Foto de Perfil</label>
+            <label for="edit-foto-file" class="upload-dropzone">
+              <span class="upload-icon">📸</span>
+              <div>
+                <span class="upload-text">Selecionar Foto</span>
+                <span class="upload-subtext" style="display: block;">PNG, JPG ou WEBP (Max 5MB)</span>
+              </div>
+            </label>
+            <input type="file" id="edit-foto-file" accept="image/*" class="file-input-hidden" onchange="carregarFotoPerfil(event)">
+            <div id="preview-foto-container" style="margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome de Exibição *</label>
+            <input type="text" id="edit-nome" class="form-input" placeholder="Seu nome completo">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Biografia / Resumo Acadêmico</label>
+            <textarea id="edit-bio" class="form-textarea" rows="3" placeholder="Escreva um breve resumo sobre sua formação..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">LinkedIn (URL)</label>
+            <input type="url" id="edit-linkedin" class="form-input" placeholder="https://linkedin.com/in/seu-perfil">
+          </div>
+
+          <button onclick="salvarPerfil()" class="btn-submit">Salvar Perfil</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL DE ZOOM NA IMAGEM -->
+  <div id="modal-zoom" class="image-modal" onclick="fecharModalZoom(event)">
+    <span class="image-modal-close" onclick="fecharModalZoomDirect()">&times;</span>
+    <img id="img-modal-target" class="image-modal-content" src="" alt="Imagem Ampliada">
+  </div>
+
+  <!-- MODAL DE PERFIL DO ALUNO PUBLICADOR -->
+  <div id="modal-perfil-autor" class="image-modal" onclick="fecharModalPerfil(event)">
+    <div style="background: #FFF; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 380px; position: relative; border: 1px solid var(--una-border-pink, #F3D3E0); text-align: center;">
+      <span class="image-modal-close" style="top: 0.75rem; right: 0.75rem; font-size: 1.2rem; width: 35px; height: 35px; background: #F1F5F9; color: #333; border-color: #CBD5E1;" onclick="fecharModalPerfilDirect()">✕</span>
+      
+      <div id="author-modal-avatar" class="author-avatar" style="width: 80px; height: 80px; font-size: 1.8rem; margin: 0 auto 0.75rem auto;"></div>
+      
+      <h3 id="author-modal-nome" style="font-size: 1.15rem; font-weight: 800; color: var(--una-vinho, #3B0033); margin-bottom: 0.1rem;">Nome do Aluno</h3>
+      
+      <span id="author-modal-curso" class="badge-tag" style="background: #E0F2FE; color: #0369A1; border-color: #BAE6FD; margin-bottom: 1rem; display: inline-block; white-space: normal; text-align: center; max-width: 100%; word-break: break-word;">
+        Curso de Graduação
+      </span>
+
+      <div style="text-align: left; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+        <strong style="font-size: 0.8rem; color: var(--una-vinho);">Sobre / Biografia:</strong>
+        <p id="author-modal-bio" style="font-size: 0.78rem; color: #444; margin-top: 0.3rem; line-height: 1.4;">
+          Nenhuma biografia informada.
+        </p>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <strong style="font-size: 0.8rem; color: var(--una-vinho); display: block; margin-bottom: 0.5rem;">Redes & Links Profissionais:</strong>
+        <div id="author-modal-redes" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let fotoPerfilBase64 = '';
+    let projetosPendentes = [];
+    let paginaAtual = 0;
+    let dadosPublicadorAtual = null;
+    let imagensGaleriaAtual = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarPerfilGuardado();
+      carregarProjetosPendentesComFoco();
+    });
+
+    function sairDaConta() {
+      localStorage.removeItem('usuarioLogado');
+      window.location.href = 'index.html';
+    }
+
+    function mudarAba(aba) {
+      const secaoAvaliacao = document.getElementById('secao-avaliacao');
+      const secaoPerfil = document.getElementById('secao-perfil');
+      const btnAvaliacao = document.getElementById('btn-tab-avaliacao');
+      const btnPerfil = document.getElementById('btn-tab-perfil');
+
+      if (aba === 'avaliacao') {
+        secaoAvaliacao.style.display = 'block';
+        secaoPerfil.style.display = 'none';
+        btnAvaliacao.classList.add('active');
+        btnPerfil.classList.remove('active');
+      } else {
+        secaoAvaliacao.style.display = 'none';
+        secaoPerfil.style.display = 'block';
+        btnPerfil.classList.add('active');
+        btnAvaliacao.classList.remove('active');
+      }
+    }
+
+    function carregarFotoPerfil(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        fotoPerfilBase64 = e.target.result;
+        renderizarPreviewFoto();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removerFotoPerfil() {
+      fotoPerfilBase64 = '';
+      document.getElementById('edit-foto-file').value = '';
+      renderizarPreviewFoto();
+    }
+
+    function renderizarPreviewFoto() {
+      const container = document.getElementById('preview-foto-container');
+      if (fotoPerfilBase64) {
+        container.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--una-light, #FDF0F5); padding: 0.5rem 0.7rem; border-radius: 0.5rem; border: 1px solid var(--una-border-pink, #F3D3E0);">
+            <img src="${fotoPerfilBase64}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid var(--una-primary, #6A005B);" />
+            <span style="font-size: 0.72rem; color: var(--una-vinho, #3B0033); font-weight: 700;">Nova foto pronta para salvar</span>
+            <button type="button" onclick="removerFotoPerfil()" style="margin-left: auto; background: #EF4444; color: #FFF; border: none; padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-size: 0.68rem; font-weight: 700; cursor: pointer;">Remover ✕</button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = '';
+      }
+    }
+
+    function carregarPerfilGuardado() {
+      const usuario = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
+      
+      document.getElementById('exibir-nome').textContent = usuario.nome || 'Professor';
+      document.getElementById('exibir-email').textContent = usuario.email || 'professor@una.br';
+      
+      document.getElementById('edit-nome').value = usuario.nome || '';
+      document.getElementById('edit-bio').value = usuario.bio || '';
+      document.getElementById('edit-linkedin').value = usuario.linkedin || '';
+
+      const avatarDiv = document.getElementById('avatar-display');
+      if (usuario.foto) {
+        fotoPerfilBase64 = usuario.foto;
+        avatarDiv.innerHTML = `<img src="${usuario.foto}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />`;
+        renderizarPreviewFoto();
+      } else {
+        const iniciais = (usuario.nome || 'PR').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        avatarDiv.textContent = iniciais || 'PR';
+      }
+
+      const bioP = document.getElementById('exibir-bio');
+      bioP.textContent = usuario.bio || 'Nenhuma biografia adicionada ainda.';
+
+      const redesDiv = document.getElementById('exibir-redes');
+      let htmlRedes = '';
+
+      if (usuario.linkedin) {
+        htmlRedes += `<a href="${usuario.linkedin}" target="_blank" class="social-badge">👔 LinkedIn ↗</a>`;
+      }
+
+      if (!htmlRedes) {
+        htmlRedes = `<p style="font-size: 0.72rem; color: var(--text-muted);">Nenhum link adicionado.</p>`;
+      }
+
+      redesDiv.innerHTML = htmlRedes;
+    }
+
+    function salvarPerfil() {
+      let usuario = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
+
+      usuario.nome = document.getElementById('edit-nome').value.trim() || usuario.nome;
+      usuario.bio = document.getElementById('edit-bio').value.trim();
+      usuario.linkedin = document.getElementById('edit-linkedin').value.trim();
+
+      if (fotoPerfilBase64) {
+        usuario.foto = fotoPerfilBase64;
+      } else {
+        delete usuario.foto;
+      }
+
+      localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+
+      let contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+      const index = contas.findIndex(c => c.email === usuario.email);
+      if (index !== -1) {
+        contas[index] = { ...contas[index], ...usuario };
+        localStorage.setItem('contasMostraPlus', JSON.stringify(contas));
+      }
+
+      alert('Perfil do professor atualizado com sucesso!');
+      carregarPerfilGuardado();
+    }
+
+    function abrirModalZoom(src) {
+      if (!src) return;
+      const modal = document.getElementById('modal-zoom');
+      const target = document.getElementById('img-modal-target');
+      target.src = src;
+      modal.style.display = 'flex';
+    }
+
+    function fecharModalZoom(event) {
+      if (event.target.id === 'modal-zoom') {
+        document.getElementById('modal-zoom').style.display = 'none';
+      }
+    }
+
+    function fecharModalZoomDirect() {
+      document.getElementById('modal-zoom').style.display = 'none';
+    }
+
+    function abrirModalPerfil() {
+      if (!dadosPublicadorAtual) return;
+      const avatarDiv = document.getElementById('author-modal-avatar');
+      if (dadosPublicadorAtual.foto && dadosPublicadorAtual.foto.trim() !== '') {
+        avatarDiv.innerHTML = `<img src="${dadosPublicadorAtual.foto}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='${dadosPublicadorAtual.iniciais}'" />`;
+      } else {
+        avatarDiv.innerHTML = dadosPublicadorAtual.iniciais;
+      }
+      document.getElementById('author-modal-nome').textContent = dadosPublicadorAtual.nome;
+      document.getElementById('author-modal-curso').textContent = dadosPublicadorAtual.curso ? `📚 ${dadosPublicadorAtual.curso}` : 'Estudante Acadêmico';
+      document.getElementById('author-modal-bio').textContent = dadosPublicadorAtual.bio || 'Nenhuma biografia informada.';
+
+      const redesContainer = document.getElementById('author-modal-redes');
+      let htmlRedes = '';
+      if (dadosPublicadorAtual.linkedin) htmlRedes += `<a href="${dadosPublicadorAtual.linkedin}" target="_blank" class="social-badge">LinkedIn ↗</a>`;
+      if (dadosPublicadorAtual.github) htmlRedes += `<a href="${dadosPublicadorAtual.github}" target="_blank" class="social-badge">GitHub ↗</a>`;
+      if (dadosPublicadorAtual.portfolio) htmlRedes += `<a href="${dadosPublicadorAtual.portfolio}" target="_blank" class="social-badge">Portfólio ↗</a>`;
+      if (!htmlRedes) htmlRedes = `<p style="font-size: 0.72rem; color: var(--text-muted);">Nenhum link adicionado.</p>`;
+      redesContainer.innerHTML = htmlRedes;
+
+      document.getElementById('modal-perfil-autor').style.display = 'flex';
+    }
+
+    function fecharModalPerfil(event) {
+      if (event.target.id === 'modal-perfil-autor') {
+        document.getElementById('modal-perfil-autor').style.display = 'none';
+      }
+    }
+
+    function fecharModalPerfilDirect() {
+      document.getElementById('modal-perfil-autor').style.display = 'none';
+    }
+
+    function extrairUrlImagem(item) {
+      if (!item) return '';
+      if (typeof item === 'string') return item.trim();
+      if (typeof item === 'object') {
+        if (item.url && typeof item.url === 'string') return item.url.trim();
+        if (item.src && typeof item.src === 'string') return item.src.trim();
+        if (item.base64 && typeof item.base64 === 'string') return item.base64.trim();
+      }
+      return '';
+    }
+
+    function carregarProjetosPendentesComFoco() {
+      const listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      projetosPendentes = listaProjetos.filter(p => p.status === 'Pendente');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const projetoIdAlvo = urlParams.get('id');
+
+      if (projetoIdAlvo) {
+        const indexEncontrado = projetosPendentes.findIndex(p => String(p.id) === String(projetoIdAlvo));
+        if (indexEncontrado !== -1) {
+          paginaAtual = indexEncontrado;
+        }
+      } else {
+        if (paginaAtual >= projetosPendentes.length && projetosPendentes.length > 0) {
+          paginaAtual = projetosPendentes.length - 1;
+        }
+      }
+
+      renderizarProjetoPaginado();
+    }
+
+    function renderizarProjetoPaginado() {
+      const container = document.getElementById('lista-pendentes-container');
+      const barPaginacao = document.getElementById('bar-paginacao');
+      const contadorProgresso = document.getElementById('contador-progresso');
+      const contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+
+      if (projetosPendentes.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem 1rem; background: #FFF; border-radius: 1rem; border: 1px solid var(--border-color);">
+            <p style="font-weight: 700; color: var(--text-main);">Nenhum projeto pendente no momento!</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Todos os trabalhos submetidos já foram avaliados.</p>
+          </div>
+        `;
+        barPaginacao.style.display = 'none';
+        contadorProgresso.textContent = '0 de 0';
+        return;
+      }
+
+      const p = projetosPendentes[paginaAtual];
+
+      let contaPublicador = p.emailContato ? contas.find(c => c.email && c.email.toLowerCase() === p.emailContato.toLowerCase()) : null;
+      const nomePublicador = contaPublicador?.nome || p.participantes || 'Estudante';
+      const cursoPublicador = contaPublicador?.curso || 'Engenharia de Software';
+      const emailPublicador = p.emailContato || contaPublicador?.email || 'E-mail não informado';
+      const fotoPublicador = contaPublicador?.foto || '';
+      const iniciaisPublicador = nomePublicador.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AL';
+
+      dadosPublicadorAtual = { 
+        nome: nomePublicador, 
+        curso: cursoPublicador, 
+        foto: fotoPublicador, 
+        iniciais: iniciaisPublicador, 
+        bio: contaPublicador?.bio || '', 
+        linkedin: contaPublicador?.linkedin || '', 
+        github: contaPublicador?.github || '', 
+        portfolio: contaPublicador?.portfolio || '' 
+      };
+
+      const avatarHtml = (fotoPublicador && fotoPublicador.trim() !== '')
+        ? `<img src="${fotoPublicador}" class="author-avatar" onerror="this.outerHTML='<div class=\'author-avatar\'>${iniciaisPublicador}</div>'" />`
+        : `<div class="author-avatar">${iniciaisPublicador}</div>`;
+
+      const logoUrl = extrairUrlImagem(p.logo);
+      const capaHtml = logoUrl ? `
+        <div style="width: 100%; height: 180px; background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 0.85rem; padding: 0.5rem;">
+          <img src="${logoUrl}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.style.display='none'" />
+        </div>
+      ` : '';
+
+      let rawGaleria = p.imagensDetalhadas || p.galeria || p.imagens || [];
+      let listaGaleriaUrls = [];
+
+      if (Array.isArray(rawGaleria)) {
+        rawGaleria.forEach(item => {
+          let url = extrairUrlImagem(item);
+          if (url) listaGaleriaUrls.push(url);
+        });
+      }
+
+      imagensGaleriaAtual = listaGaleriaUrls;
+
+      let galeriaHtml = '';
+      if (listaGaleriaUrls.length > 0) {
+        galeriaHtml = `
+          <div style="margin: 0.75rem 0;">
+            <strong style="font-size: 0.75rem; color: var(--una-vinho); display: block; margin-bottom: 0.3rem;">
+              Galeria de Anexos (${listaGaleriaUrls.length}):
+            </strong>
+            <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: thin;">
+              ${listaGaleriaUrls.map((url, index) => `
+                <div class="thumb-hover" onclick="abrirModalZoom(imagensGaleriaAtual[${index}])" style="flex-shrink: 0; width: 110px; height: 80px; background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 0.5rem; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 0.2rem;">
+                  <img src="${url}" alt="Anexo ${index + 1}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'" />
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      const botaoLinkHtml = p.linkSite ? `
+        <div style="margin: 0.75rem 0;">
+          <a href="${p.linkSite}" target="_blank" class="filter-btn" style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--una-light); color: var(--una-primary); border: 1px solid var(--una-border-pink); text-decoration: none; padding: 0.5rem 0.9rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700;">
+            🔗 Ver Projeto / Repositório ↗
+          </a>
+        </div>
+      ` : '';
+
+      container.innerHTML = `
+        <div style="background: #FFF; border: 2px solid var(--una-border-pink); border-radius: 1rem; padding: 1.25rem; box-shadow: 0 4px 12px rgba(106, 0, 91, 0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span class="badge-tag">${p.categoria || 'Geral'}</span>
+            <span style="font-size: 0.65rem; font-weight: 800; color: #F59E0B; background: #FEF3C7; padding: 0.2rem 0.5rem; border-radius: 4px;">Pendente</span>
+          </div>
+
+          <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--una-vinho); margin-bottom: 0.75rem;">${p.titulo}</h2>
+
+          <!-- CARD ROSA DO ESTUDANTE QUE PUBLICOU -->
+          <div class="author-card-clickable" onclick="abrirModalPerfil()">
+            ${avatarHtml}
+            <div>
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--una-primary); text-transform: uppercase;">PUBLICADO POR:</span>
+              <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--una-vinho); margin-top: 0.1rem;">${nomePublicador}</h3>
+              <p style="font-size: 0.75rem; color: #555; margin-top: 0.1rem;">📚 ${cursoPublicador}</p>
+              <p style="font-size: 0.72rem; color: #666; margin-top: 0.1rem;">✉️ ${emailPublicador}</p>
+            </div>
+          </div>
+
+          ${capaHtml}
+
+          <!-- LISTA DE TODOS OS ALUNOS INTEGRANTES E DESCRIÇÃO -->
+          <div style="background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.85rem; margin-bottom: 0.75rem;">
+            <strong style="font-size: 0.78rem; color: var(--una-vinho); display: block; margin-bottom: 0.2rem;">Alunos:</strong>
+            <p style="font-size: 0.82rem; font-weight: 800; color: #1E293B; margin-bottom: 0.75rem;">${p.participantes || nomePublicador}</p>
+
+            <strong style="font-size: 0.78rem; color: var(--una-vinho); display: block; margin-bottom: 0.2rem;">Descrição:</strong>
+            <p style="font-size: 0.78rem; color: #334155; line-height: 1.4;">${p.descricao}</p>
+          </div>
+
+          ${galeriaHtml}
+          ${botaoLinkHtml}
+
+          <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+            <label style="display: block; font-size: 0.72rem; font-weight: 800; color: var(--una-vinho); margin-bottom: 0.3rem;">
+              Comentário (Obrigatório se reprovado):
+            </label>
+            <textarea id="feedback-${p.id}" class="form-textarea" rows="2" placeholder="Insira o feedback para os alunos..." style="width: 100%; margin-bottom: 0.75rem;"></textarea>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <button onclick="avaliarProjeto(${p.id}, 'Aprovado')" style="flex: 1; background: #003317; color: #FFF; border: none; padding: 0.65rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 800; cursor: pointer;">
+                ✓ Aprovar
+              </button>
+              <button onclick="avaliarProjeto(${p.id}, 'Reprovado')" style="flex: 1; background: #530606; color: #FFF; border: none; padding: 0.65rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 800; cursor: pointer;">
+                ✕ Reprovar
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      contadorProgresso.textContent = `Projeto ${paginaAtual + 1} de ${projetosPendentes.length}`;
+      barPaginacao.style.display = 'flex';
+
+      document.getElementById('btn-page-prev').disabled = (paginaAtual === 0);
+      document.getElementById('btn-page-next').disabled = (paginaAtual === projetosPendentes.length - 1);
+
+      const numContainer = document.getElementById('numeros-paginas');
+      numContainer.innerHTML = projetosPendentes.map((_, idx) => `
+        <button class="page-number-btn ${idx === paginaAtual ? 'active' : ''}" onclick="irParaPagina(${idx})">
+          ${idx + 1}
+        </button>
+      `).join('');
+    }
+
+    function mudarPagina(delta) {
+      const novaPagina = paginaAtual + delta;
+      if (novaPagina >= 0 && novaPagina < projetosPendentes.length) {
+        paginaAtual = novaPagina;
+        renderizarProjetoPaginado();
+      }
+    }
+
+    function irParaPagina(index) {
+      if (index >= 0 && index < projetosPendentes.length) {
+        paginaAtual = index;
+        renderizarProjetoPaginado();
+      }
+    }
+
+    function avaliarProjeto(idProjeto, novoStatus) {
+      const feedbackInput = document.getElementById(`feedback-${idProjeto}`);
+      const comentario = feedbackInput ? feedbackInput.value.trim() : '';
+
+      if (novoStatus === 'Reprovado' && !comentario) {
+        alert('É obrigatório preencher o parecer/comentário ao reprovar um projeto.');
+        return;
+      }
+
+      let listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      const index = listaProjetos.findIndex(p => String(p.id) === String(idProjeto));
+
+      if (index !== -1) {
+        listaProjetos[index].status = novoStatus;
+        listaProjetos[index].comentarioProfessor = comentario;
+        listaProjetos[index].dataAvaliacao = new Date().toLocaleDateString('pt-BR');
+
+        const projeto = listaProjetos[index];
+        if (projeto.emailContato) {
+          let notificacoes = JSON.parse(localStorage.getItem('notificacoesMostraPlus')) || [];
+          const dataHoraAtual = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          
+          notificacoes.unshift({
+            id: Date.now(),
+            tipo: 'avaliacao',
+            emailDestinatario: projeto.emailContato.toLowerCase(),
+            projetoId: projeto.id,
+            tituloProjeto: projeto.titulo,
+            autorComentario: 'Professor Avaliador',
+            comentarioTexto: `O projeto "${projeto.titulo}" foi ${novoStatus.toLowerCase()}${comentario ? '. Parecer: ' + comentario : '.'}`,
+            data: dataHoraAtual,
+            lida: false
+          });
+          localStorage.setItem('notificacoesMostraPlus', JSON.stringify(notificacoes));
+        }
+
+        localStorage.setItem('projetosMostraPlus', JSON.stringify(listaProjetos));
+        alert(`Projeto ${novoStatus.toLowerCase()} com sucesso! A notificação foi enviada ao aluno.`);
+        carregarProjetosPendentesComFoco();
+      }
+    }
+  </script>
+
+</body>
+</html>

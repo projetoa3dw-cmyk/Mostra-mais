@@ -1,0 +1,307 @@
+/* ==========================================
+   PALETA DE CORES OFICIAL UNA / ÂNIMA
+   ========================================== */
+:root {
+  --una-primary: #6A005B;   /* Roxo magenta principal */
+  --una-vinho: #3B0033;     /* Roxo escuro / Vinho institucional */
+  --una-dark: #3B0033;      /* Cor escura padrão */
+  --una-light: #FDF0F5;     /* Rosa suave institucional */
+  --una-border-pink: #F3D3E0; /* Borda suave rosada */
+  --text-main: #222222;     /* Texto principal */
+  --text-muted: #666666;    /* Texto secundário */
+  --border-color: #E2E8F0;  /* Cor de bordas */
+  --bg-color: #FAFAFA;      /* Cor de fundo geral */
+}
+
+/* Reset básico e tipografia */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Container principal com comportamento Mobile-First */
+.mobile-container {
+  width: 100%;
+  max-width: 480px;
+  background-color: #FFFFFF;
+  min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho fixo */
+.header-sticky {
+  position: sticky;
+  top: 0;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.brand-logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--una-primary);
+  text-decoration: none;
+}
+.brand-logo span { color: var(--una-vinho); }
+
+/* Banner com gradiente institucional */
+.hero-banner {
+  background: linear-gradient(135deg, var(--una-primary), var(--una-vinho));
+  color: #FFFFFF;
+  padding: 1.5rem 1rem;
+  border-bottom-left-radius: 1.25rem;
+  border-bottom-right-radius: 1.25rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  outline: none;
+  background-color: #FFFFFF;
+  margin-top: 0.75rem;
+}
+
+/* Filtros de categorias com scroll horizontal */
+.filters-scroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 1rem;
+  scrollbar-width: none;
+}
+.filters-scroll::-webkit-scrollbar { display: none; }
+
+.filter-btn {
+  background-color: var(--una-light);
+  color: var(--una-primary);
+  border: 1px solid var(--una-border-pink);
+  padding: 0.45rem 0.9rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.filter-btn.active {
+  background-color: var(--una-primary);
+  color: #FFFFFF;
+  border-color: var(--una-primary);
+}
+
+/* Lista de projetos */
+.projects-list {
+  padding: 0 1rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+/* Cartão do projeto com o layout natural original */
+.project-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(106, 0, 91, 0.08);
+  border-color: var(--una-border-pink);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.badge-tag {
+  background-color: var(--una-light);
+  color: var(--una-primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  border: 1px solid var(--una-border-pink);
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--una-vinho);
+  margin-bottom: 0.25rem;
+}
+
+.project-authors {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.project-desc {
+  font-size: 0.75rem;
+  color: #444444;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Formulários */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--una-vinho);
+  margin-bottom: 0.3rem;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  font-size: 0.8rem;
+  outline: none;
+  background-color: #FAFAFA;
+}
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--una-primary);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(106, 0, 91, 0.1);
+}
+
+/* Botões */
+.btn-submit {
+  width: 100%;
+  background-color: var(--una-primary);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 10px rgba(106, 0, 91, 0.2);
+  transition: background-color 0.2s;
+}
+.btn-submit:hover {
+  background-color: var(--una-vinho);
+}
+
+.user-badge-bar {
+  background-color: var(--una-light);
+  border: 1px solid var(--una-border-pink);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.user-info { display: flex; align-items: center; gap: 0.75rem; }
+.avatar-circle {
+  width: 36px; height: 36px;
+  background-color: var(--una-primary);
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.8rem;
+}
+.user-name { font-size: 0.8rem; font-weight: 800; color: var(--una-vinho); }
+.user-role { font-size: 0.65rem; color: var(--text-muted); }
+
+/* Gestão de imagens no formulário */
+.image-upload-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: var(--una-light);
+  border: 1px solid var(--una-border-pink);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.image-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.image-preview-row img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.35rem;
+  border: 1px solid var(--border-color);
+}
+
+/* ==========================================
+   ADAPTAÇÃO RESPONSIVA (TABLET E DESKTOP)
+   ========================================== */
+@media (min-width: 768px) {
+  .mobile-container {
+    position: relative;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #FFF;
+    /* ... demais estilos ... */
+  }
+
+  .projects-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-container {
+    max-width: 1100px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border-radius: 1rem;
+    margin: 1.5rem auto;
+  }
+
+  .projects-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

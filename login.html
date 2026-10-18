@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostra+ | Autenticação & Cadastro</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Alternância entre Entrar e Cadastrar */
+    .auth-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: #F1F5F9;
+      padding: 0.35rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: transparent;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-muted, #666);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      text-align: center;
+    }
+
+    .auth-tab-btn.active {
+      background: #FFFFFF;
+      color: var(--una-primary, #6A005B);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* Modal de Esqueci Minha Senha */
+    .custom-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      color: #333;
+      background: #F1F5F9;
+      font-size: 1.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 0 !important;
+      border: 1px solid #CBD5E1;
+      transition: background 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: #EF4444;
+      color: #FFF;
+      border-color: #EF4444;
+    }
+
+    .link-esqueci {
+      font-size: 0.75rem;
+      color: var(--una-primary, #6A005B);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 0.25rem;
+    }
+
+    .link-esqueci:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <header class="header-sticky">
+      <a href="index.html" class="brand-logo">Mostra<span>+</span></a>
+      <a href="index.html" style="font-size: 0.75rem; color: var(--una-primary); text-decoration: none; font-weight: 600;">← Voltar à Vitrine</a>
+    </header>
+
+    <div class="hero-banner">
+      <h1 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;" id="titulo-banner">Acesse a Plataforma</h1>
+      <p style="font-size: 0.75rem; opacity: 0.9;" id="subtitulo-banner">Entre com as suas credenciais ou crie a sua conta.</p>
+    </div>
+
+    <main style="padding: 1.25rem 1rem;">
+      <div style="background: #FFF; border: 1px solid var(--border-color); border-radius: 1rem; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        
+        <!-- ABAS DE ENTRAR E CADASTRAR -->
+        <div class="auth-tabs">
+          <button id="btn-tab-login" class="auth-tab-btn active" onclick="mudarAbaAuth('login')">Entrar</button>
+          <button id="btn-tab-cadastro" class="auth-tab-btn" onclick="mudarAbaAuth('cadastro')">Criar Conta</button>
+        </div>
+
+        <!-- FORMULÁRIO DE LOGIN -->
+        <form id="form-login" onsubmit="realizarLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Perfil de Acesso *</label>
+            <select id="login-perfil" class="form-select" required>
+              <option value="aluno">Aluno / Estudante</option>
+              <option value="professor">Professor / Avaliador</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">E-mail *</label>
+            <input type="email" id="login-email" class="form-input" placeholder="seu.email@una.br" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label class="form-label">Senha *</label>
+            <input type="password" id="login-senha" class="form-input" placeholder="••••••••" required>
+          </div>
+
+          <div style="text-align: right; margin-bottom: 1.25rem;">
+            <span class="link-esqueci" onclick="abrirModalEsqueciSenha()">Esqueci minha senha</span>
+          </div>
+
+          <button type="submit" class="btn-submit">Entrar no Sistema</button>
+        </form>
+
+        <!-- FORMULÁRIO DE CADASTRO COM CAMPO DE RA E CURSO -->
+        <form id="form-cadastro" style="display: none;" onsubmit="realizarCadastro(event)">
+          <div class="form-group">
+            <label class="form-label">Nome Completo *</label>
+            <input type="text" id="cad-nome" class="form-input" placeholder="Seu nome completo" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Perfil de Conta *</label>
+            <select id="cad-perfil" class="form-select" onchange="alternarCamposAluno()" required>
+              <option value="aluno">Aluno / Estudante</option>
+              <option value="professor">Professor / Avaliador</option>
+            </select>
+          </div>
+
+          <!-- CAMPOS DE ALUNO (RA E CURSO) -->
+          <div class="form-group" id="group-cad-ra">
+            <label class="form-label">RA (Registro Acadêmico) *</label>
+            <input type="text" id="cad-ra" class="form-input" placeholder="Digite seu RA (ex: 12345678)" required>
+          </div>
+
+          <div class="form-group" id="group-cad-curso">
+            <label class="form-label">Curso Superior / Faculdade *</label>
+            <input type="text" id="cad-curso" class="form-input" placeholder="Ex: Engenharia de Software, Direito..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">E-mail *</label>
+            <input type="email" id="cad-email" class="form-input" placeholder="seu.email@una.br" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirmar E-mail *</label>
+            <input type="email" id="cad-email-confirma" class="form-input" placeholder="Confirme seu e-mail" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Senha *</label>
+            <input type="password" id="cad-senha" class="form-input" placeholder="Crie uma senha de acesso" required>
+          </div>
+
+          <button type="submit" class="btn-submit">Cadastrar e Entrar</button>
+        </form>
+
+        <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 1.25rem; line-height: 1.4;">
+          Ao prosseguir, concorda com as diretrizes de privacidade e uso acadêmico da instituição.
+        </p>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+  <div id="modal-esqueci-senha" class="custom-modal" onclick="fecharModalEsqueci(event)">
+    <div class="modal-card">
+      <span class="modal-close-btn" onclick="fecharModalEsqueciDirect()">✕</span>
+      
+      <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--una-vinho, #3B0033); margin-bottom: 0.3rem;">
+        Recuperar Senha
+      </h3>
+      <p style="font-size: 0.75rem; color: var(--text-muted, #666); margin-bottom: 1rem;">
+        Informe o e-mail cadastrado para redefinir a sua senha de acesso.
+      </p>
+
+      <form onsubmit="redefinirSenha(event)">
+        <div class="form-group">
+          <label class="form-label">E-mail Cadastrado *</label>
+          <input type="email" id="recuperar-email" class="form-input" placeholder="seu.email@una.br" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nova Senha *</label>
+          <input type="password" id="recuperar-nova-senha" class="form-input" placeholder="Digite a nova senha" required>
+        </div>
+
+        <button type="submit" class="btn-submit" style="margin-top: 0.5rem;">Salvar Nova Senha</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function mudarAbaAuth(aba) {
+      const formLogin = document.getElementById('form-login');
+      const formCadastro = document.getElementById('form-cadastro');
+      const btnLogin = document.getElementById('btn-tab-login');
+      const btnCadastro = document.getElementById('btn-tab-cadastro');
+      const tituloBanner = document.getElementById('titulo-banner');
+
+      if (aba === 'login') {
+        formLogin.style.display = 'block';
+        formCadastro.style.display = 'none';
+        btnLogin.classList.add('active');
+        btnCadastro.classList.remove('active');
+        tituloBanner.textContent = 'Acesse a Plataforma';
+      } else {
+        formLogin.style.display = 'none';
+        formCadastro.style.display = 'block';
+        btnCadastro.classList.add('active');
+        btnLogin.classList.remove('active');
+        tituloBanner.textContent = 'Crie a Sua Conta';
+        alternarCamposAluno();
+      }
+    }
+
+    function alternarCamposAluno() {
+      const perfil = document.getElementById('cad-perfil').value;
+      const groupRA = document.getElementById('group-cad-ra');
+      const groupCurso = document.getElementById('group-cad-curso');
+      const inputRA = document.getElementById('cad-ra');
+      const inputCurso = document.getElementById('cad-curso');
+
+      if (perfil === 'aluno') {
+        groupRA.style.display = 'block';
+        groupCurso.style.display = 'block';
+        inputRA.required = true;
+        inputCurso.required = true;
+      } else {
+        groupRA.style.display = 'none';
+        groupCurso.style.display = 'none';
+        inputRA.required = false;
+        inputCurso.required = false;
+        inputRA.value = '';
+        inputCurso.value = '';
+      }
+    }
+
+    function realizarLogin(e) {
+      e.preventDefault();
+      const perfil = document.getElementById('login-perfil').value;
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const senha = document.getElementById('login-senha').value;
+
+      let contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+      let contaEncontrada = contas.find(c => c.email.toLowerCase() === email && c.perfil === perfil);
+
+      if (!contaEncontrada) {
+        alert('Conta não encontrada com este e-mail e perfil. Por favor, utilize a aba "Criar Conta".');
+        return;
+      } else if (contaEncontrada.senha !== senha) {
+        alert('Senha incorreta! Tente novamente ou utilize "Esqueci minha senha".');
+        return;
+      }
+
+      localStorage.setItem('usuarioLogado', JSON.stringify(contaEncontrada));
+
+      // Redireciona diretamente para a vitrine (index.html) para ambos os perfis
+      window.location.href = 'index.html';
+    }
+
+    function realizarCadastro(e) {
+      e.preventDefault();
+      const nome = document.getElementById('cad-nome').value.trim();
+      const perfil = document.getElementById('cad-perfil').value;
+      const ra = document.getElementById('cad-ra').value.trim();
+      const curso = document.getElementById('cad-curso').value.trim();
+      const email = document.getElementById('cad-email').value.trim().toLowerCase();
+      const emailConfirma = document.getElementById('cad-email-confirma').value.trim().toLowerCase();
+      const senha = document.getElementById('cad-senha').value;
+
+      if (email !== emailConfirma) {
+        alert('Os e-mails informados não coincidem! Verifique e tente novamente.');
+        return;
+      }
+
+      let contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+      const existe = contas.some(c => c.email.toLowerCase() === email);
+
+      if (existe) {
+        alert('Este e-mail já está cadastrado! Alterne para a aba "Entrar".');
+        return;
+      }
+
+      const novaConta = { 
+        nome, 
+        perfil, 
+        ra: (perfil === 'aluno' ? ra : ''), 
+        curso: (perfil === 'aluno' ? curso : ''),
+        email, 
+        senha 
+      };
+
+      contas.push(novaConta);
+      localStorage.setItem('contasMostraPlus', JSON.stringify(contas));
+
+      localStorage.setItem('usuarioLogado', JSON.stringify(novaConta));
+      alert('Conta criada com sucesso!');
+
+      // Redireciona diretamente para a vitrine (index.html) após o cadastro
+      window.location.href = 'index.html';
+    }
+
+    function abrirModalEsqueciSenha() {
+      document.getElementById('modal-esqueci-senha').style.display = 'flex';
+    }
+
+    function fecharModalEsqueci(event) {
+      if (event.target.id === 'modal-esqueci-senha') {
+        document.getElementById('modal-esqueci-senha').style.display = 'none';
+      }
+    }
+
+    function fecharModalEsqueciDirect() {
+      document.getElementById('modal-esqueci-senha').style.display = 'none';
+    }
+
+    function redefinirSenha(e) {
+      e.preventDefault();
+      const email = document.getElementById('recuperar-email').value.trim().toLowerCase();
+      const novaSenha = document.getElementById('recuperar-nova-senha').value;
+
+      let contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+      const index = contas.findIndex(c => c.email.toLowerCase() === email);
+
+      if (index !== -1) {
+        contas[index].senha = novaSenha;
+        localStorage.setItem('contasMostraPlus', JSON.stringify(contas));
+        alert('Senha alterada com sucesso! Faça login com a nova senha.');
+        fecharModalEsqueciDirect();
+      } else {
+        alert('E-mail não encontrado no sistema. Verifique se o endereço digitado está correto.');
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostra+ | Perfil do Estudante</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .header-sticky {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .brand-logo {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .header-btn-action {
+      height: 32px;
+      padding: 0 0.65rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-sair-topo {
+      background: #4d0000;
+      color: #fffbfb;
+      border: 1px solid #4b0000;
+      cursor: pointer;
+    }
+    .btn-sair-topo:hover {
+      background: #EF4444;
+      color: #FFF;
+    }
+
+    .profile-card {
+      background: #FFF;
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 1.25rem;
+    }
+
+    .avatar-container {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--una-light, #FDF0F5);
+      border: 2px solid var(--una-primary, #6A005B);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--una-primary, #6A005B);
+      font-size: 1.4rem;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .project-item-card {
+      background: #FAFAFA;
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .project-item-card:hover {
+      border-color: var(--una-primary, #6A005B);
+      background: #FFF;
+    }
+
+    .btn-edit-toggle {
+      background: var(--una-light, #FDF0F5);
+      color: var(--una-primary, #6A005B);
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-edit-toggle:hover {
+      background: var(--una-primary, #6A005B);
+      color: #FFF;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      background: var(--una-light, #FDF0F5);
+      border: 1px dashed var(--una-border-pink, #F3D3E0);
+      border-radius: 0.65rem;
+      padding: 0.85rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-input-wrapper:hover {
+      border-color: var(--una-primary, #6A005B);
+      background: #FCE8F2;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .btn-delete-project {
+      background: #FEF2F2;
+      color: #EF4444;
+      border: 1px solid #FCA5A5;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-delete-project:hover {
+      background: #EF4444;
+      color: #FFF;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <header class="header-sticky">
+      <a href="index.html" class="brand-logo">Mostra<span>+</span></a>
+      
+      <div class="header-actions">
+        <a href="index.html" class="header-btn-action" style="background: var(--una-light); color: var(--una-primary); border: 1px solid var(--una-border-pink);">← Vitrine</a>
+        <button onclick="fazerLogout()" class="header-btn-action btn-sair-topo">Sair</button>
+      </div>
+    </header>
+
+    <main style="padding: 1.25rem 1rem;">
+      <div class="profile-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div id="perfil-avatar" class="avatar-container"></div>
+            <div style="overflow: hidden;">
+              <h2 id="perfil-nome" style="font-size: 1.15rem; font-weight: 800; color: var(--una-vinho); line-height: 1.2; margin-bottom: 0.2rem;">Carregando...</h2>
+              <p id="perfil-curso" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Estudante</p>
+              <p id="perfil-ra" style="font-size: 0.72rem; color: var(--text-muted); opacity: 0.8; margin-top: 0.1rem;"></p>
+            </div>
+          </div>
+
+          <button class="btn-edit-toggle" onclick="alternarFormularioEdicao()"> Editar Perfil</button>
+        </div>
+
+        <div style="margin-bottom: 1rem; background: var(--una-light); padding: 0.75rem; border-radius: 0.65rem; border: 1px solid var(--una-border-pink);">
+          <strong style="font-size: 0.78rem; color: var(--una-vinho); display: block; margin-bottom: 0.2rem;">E-mail do Estudante:</strong>
+          <span id="perfil-email" style="font-size: 0.75rem; color: #333;">-</span>
+        </div>
+
+        <!-- FORMULÁRIO DE EDIÇÃO DO PERFIL -->
+        <form id="form-edicao-perfil" style="display: none; background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 1rem; margin-bottom: 1.25rem;" onsubmit="salvarEdicaoPerfil(event)">
+          <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--una-vinho); margin-bottom: 0.8rem;">Editar Dados do Perfil</h3>
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Inserir URL da Foto de Perfil</label>
+            
+            <input type="url" id="edit-foto-url" class="form-input" placeholder="Insira ou cole a URL da imagem aqui..." style="margin-bottom: 0.5rem;" oninput="limparAnexoComputador()">
+
+            <div style="text-align: center; font-size: 0.68rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 700;">OU SE PREFERIR:</div>
+
+            <div class="file-input-wrapper">
+              <span id="label-status-foto" style="font-size: 0.72rem; font-weight: 700; color: var(--una-primary); display: block;">📁 Clique para inserir/anexar uma imagem do computador</span>
+              <input type="file" id="input-arquivo-foto" accept="image/*" onchange="converterArquivoParaBase64(event)">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.6rem;">
+            <label class="form-label">Curso</label>
+            <input type="text" id="edit-curso" class="form-input" placeholder="Ex: Ciência da Computação" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.6rem;">
+            <label class="form-label">Biografia / Sobre Você</label>
+            <textarea id="edit-bio" class="form-textarea" rows="3" placeholder="Conte um pouco sobre suas habilidades e objetivos acadêmicos..."></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.6rem;">
+            <label class="form-label">LinkedIn (URL)</label>
+            <input type="url" id="edit-linkedin" class="form-input" placeholder="https://linkedin.com/in/seu-perfil">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.6rem;">
+            <label class="form-label">GitHub (URL)</label>
+            <input type="url" id="edit-github" class="form-input" placeholder="https://github.com/seu-usuario">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label">Portfólio / Site Pessoal (URL)</label>
+            <input type="url" id="edit-portfolio" class="form-input" placeholder="https://seu-portfolio.com">
+          </div>
+
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="submit" class="btn-submit" style="padding: 0.5rem; font-size: 0.78rem;">Salvar Alterações</button>
+            <button type="button" onclick="alternarFormularioEdicao()" class="btn-submit" style="background: #64748B; padding: 0.5rem; font-size: 0.78rem;">Cancelar</button>
+          </div>
+        </form>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--una-vinho); display: flex; align-items: center; gap: 0.5rem;">
+              <span>Meus Projetos Submetidos</span>
+              <span id="qtd-projetos-badge" style="font-size: 0.7rem; background: #E2E8F0; padding: 0.15rem 0.5rem; border-radius: 1rem; color: #475569;">0</span>
+            </h3>
+            <a href="cadastro-projeto.html" class="btn-submit" style="display: inline-flex; width: auto; padding: 0.4rem 0.75rem; font-size: 0.72rem; text-decoration: none; white-space: nowrap;">+ Novo Projeto</a>
+          </div>
+          
+          <div id="meus-projetos-container">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let fotoBase64Temporaria = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarPerfilAluno();
+    });
+
+    function carregarPerfilAluno() {
+      const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+
+      if (!usuarioLogado) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.getElementById('perfil-nome').textContent = usuarioLogado.nome;
+      document.getElementById('perfil-curso').textContent = usuarioLogado.curso ? `Curso: ${usuarioLogado.curso}` : 'Estudante Acadêmico';
+      document.getElementById('perfil-ra').textContent = usuarioLogado.ra ? `RA: ${usuarioLogado.ra}` : '';
+      document.getElementById('perfil-email').textContent = usuarioLogado.email;
+
+      const avatar = document.getElementById('perfil-avatar');
+      if (avatar) {
+        if (usuarioLogado.foto && usuarioLogado.foto.trim() !== '') {
+          avatar.innerHTML = `<img src="${usuarioLogado.foto}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.textContent='${usuarioLogado.nome ? usuarioLogado.nome.substring(0, 2).toUpperCase() : 'AL'}'" />`;
+        } else {
+          const iniciais = usuarioLogado.nome ? usuarioLogado.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'AL';
+          avatar.textContent = iniciais;
+        }
+      }
+
+      fotoBase64Temporaria = '';
+      const inputUrl = document.getElementById('edit-foto-url');
+      const labelStatus = document.getElementById('label-status-foto');
+
+      if (usuarioLogado.foto && usuarioLogado.foto.startsWith('data:image')) {
+        fotoBase64Temporaria = usuarioLogado.foto;
+        inputUrl.value = '';
+        labelStatus.textContent = 'Alterar Imagem';
+      } else {
+        inputUrl.value = usuarioLogado.foto || '';
+        labelStatus.textContent = '📁 Clique para inserir/anexar uma imagem do computador';
+      }
+
+      document.getElementById('edit-curso').value = usuarioLogado.curso || '';
+      document.getElementById('edit-bio').value = usuarioLogado.bio || '';
+      document.getElementById('edit-linkedin').value = usuarioLogado.linkedin || '';
+      document.getElementById('edit-github').value = usuarioLogado.github || '';
+      document.getElementById('edit-portfolio').value = usuarioLogado.portfolio || '';
+
+      carregarMeusProjetos(usuarioLogado.email);
+    }
+
+    function converterArquivoParaBase64(event) {
+      const arquivo = event.target.files[0];
+      if (!arquivo) return;
+
+      const leitor = new FileReader();
+      leitor.onload = function(uploadevento) {
+        fotoBase64Temporaria = uploadevento.target.result;
+        document.getElementById('edit-foto-url').value = '';
+        document.getElementById('label-status-foto').textContent = `✅ Imagem inserida: ${arquivo.name}`;
+      };
+      leitor.readAsDataURL(arquivo);
+    }
+
+    function limparAnexoComputador() {
+      fotoBase64Temporaria = '';
+      document.getElementById('label-status-foto').textContent = '📁 Clique para inserir/anexar uma imagem do computador';
+      const inputArquivo = document.getElementById('input-arquivo-foto');
+      if (inputArquivo) inputArquivo.value = '';
+    }
+
+    function alternarFormularioEdicao() {
+      const form = document.getElementById('form-edicao-perfil');
+      if (form) {
+        form.style.display = (form.style.display === 'block') ? 'none' : 'block';
+      }
+    }
+
+    function salvarEdicaoPerfil(e) {
+      e.preventDefault();
+      let usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+      if (!usuarioLogado) return;
+
+      const urlDigitada = document.getElementById('edit-foto-url').value.trim();
+      
+      usuarioLogado.foto = urlDigitada !== '' ? urlDigitada : fotoBase64Temporaria;
+      usuarioLogado.curso = document.getElementById('edit-curso').value.trim();
+      usuarioLogado.bio = document.getElementById('edit-bio').value.trim();
+      usuarioLogado.linkedin = document.getElementById('edit-linkedin').value.trim();
+      usuarioLogado.github = document.getElementById('edit-github').value.trim();
+      usuarioLogado.portfolio = document.getElementById('edit-portfolio').value.trim();
+
+      localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+
+      let contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+      const index = contas.findIndex(c => c.email.toLowerCase() === usuarioLogado.email.toLowerCase());
+      if (index !== -1) {
+        contas[index] = usuarioLogado;
+        localStorage.setItem('contasMostraPlus', JSON.stringify(contas));
+      }
+
+      alert('Perfil atualizado com sucesso!');
+      alternarFormularioEdicao();
+      carregarPerfilAluno();
+    }
+
+    function carregarMeusProjetos(emailUsuario) {
+      const container = document.getElementById('meus-projetos-container');
+      const badgeQtd = document.getElementById('qtd-projetos-badge');
+      const listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+
+      const meusProjetos = listaProjetos.filter(p => p.emailContato && p.emailContato.toLowerCase() === emailUsuario.toLowerCase());
+
+      if (badgeQtd) badgeQtd.textContent = meusProjetos.length;
+      if (!container) return;
+
+      if (meusProjetos.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; background: #FAFAFA; border: 1px dashed var(--border-color); border-radius: 0.75rem;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">Você ainda não cadastrou nenhum projeto na plataforma.</p>
+            <a href="cadastro-projeto.html" class="btn-submit" style="display: inline-block; width: auto; text-decoration: none; padding: 0.5rem 1rem; font-size: 0.75rem;">Criar Meu Primeiro Projeto</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = meusProjetos.map(p => {
+        let corStatus = '#F59E0B'; // Pendente
+        if (p.status === 'Aprovado') corStatus = '#10B981'; // Verde
+        if (p.status === 'Rejeitado') corStatus = '#EF4444'; // Vermelho
+
+        return `
+          <div class="project-item-card">
+            <div style="overflow: hidden; padding-right: 0.5rem;">
+              <h4 style="font-size: 0.85rem; font-weight: 800; color: var(--una-vinho); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.titulo}</h4>
+              
+              <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem;">
+                <span style="font-size: 0.65rem; font-weight: 700; color: ${corStatus};">
+                  ● ${p.status || 'Pendente'}
+                </span>
+                
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 0.3rem; flex-shrink: 0;">
+              <a href="cadastro-projeto.html?id=${p.id}" style="display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 0.5rem; text-decoration: none; background: var(--una-light, #FDF0F5); color: var(--una-primary, #6A005B); border: 1px solid var(--una-border-pink, #F3D3E0);">Editar</a>
+              <a href="detalhe-projeto.html?id=${p.id}" style="display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 0.5rem; text-decoration: none; background: var(--una-light, #FDF0F5); color: var(--una-primary, #6A005B); border: 1px solid var(--una-border-pink, #F3D3E0);">Ver</a>
+              <button onclick="excluirProjeto('${p.id}')" class="btn-delete-project">Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function excluirProjeto(idProjeto) {
+      if (!confirm("Tem certeza que deseja excluir este projeto permanentemente?")) return;
+
+      let listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      listaProjetos = listaProjetos.filter(p => String(p.id) !== String(idProjeto));
+      
+      localStorage.setItem('projetosMostraPlus', JSON.stringify(listaProjetos));
+
+      const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+      carregarMeusProjetos(usuarioLogado.email);
+    }
+
+    function fazerLogout() {
+      localStorage.removeItem('usuarioLogado');
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostra+ | Vitrine de Projetos Acadêmicos</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .header-sticky {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .brand-logo {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .notif-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-notif {
+      background: var(--una-light, #FDF0F5);
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      color: var(--una-primary, #6A005B);
+      font-size: 0.9rem;
+      cursor: pointer;
+      position: relative;
+      height: 32px;
+      padding: 0 0.6rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-notif:hover {
+      background: var(--una-primary, #6A005B);
+      color: #FFF;
+      border-color: var(--una-primary, #6A005B);
+    }
+
+    .badge-count {
+      display: none;
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--una-primary, #6A005B);
+      color: #FFF;
+      font-size: 0.58rem;
+      font-weight: 800;
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #FFF;
+    }
+
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      right: -10px;
+      top: 2.4rem;
+      width: 280px;
+      max-width: 85vw;
+      background: #FFF;
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      border-radius: 0.85rem;
+      box-shadow: 0 10px 25px rgba(106, 0, 91, 0.12);
+      z-index: 10000;
+      padding: 0.85rem;
+      box-sizing: border-box;
+    }
+
+    .header-btn-action {
+      height: 32px;
+      padding: 0 0.65rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      margin-top: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .page-btn {
+      background: var(--una-light, #FDF0F5);
+      color: var(--una-primary, #6A005B);
+      border: 1px solid var(--una-border-pink, #F3D3E0);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #F1F5F9;
+      color: #94A3B8;
+      border-color: #E2E8F0;
+    }
+
+    .page-number-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: #FFF;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-number-btn.active {
+      background: var(--una-primary, #6A005B);
+      color: #FFF;
+      border-color: var(--una-primary, #6A005B);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <header class="header-sticky">
+      <a href="index.html" class="brand-logo">Mostra<span>+</span></a>
+      
+      <div class="header-actions">
+        <div class="notif-wrapper" id="container-sino-notificacoes" style="display: none;">
+          <button class="btn-notif" onclick="alternarCaixaNotificacoes()" title="Notificações">
+            🔔
+            <span id="badge-notificacoes" class="badge-count">0</span>
+          </button>
+
+          <div id="box-notificacoes" class="notif-dropdown">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; border-bottom: 1px solid var(--una-border-pink, #F3D3E0); padding-bottom: 0.4rem;">
+              <strong style="font-size: 0.85rem; color: var(--una-vinho, #3B0033);">Notificações</strong>
+              <span onclick="marcarTodasComoLidas()" style="font-size: 0.7rem; color: var(--una-primary, #6A005B); cursor: pointer; font-weight: 700;">Marcar lidas</span>
+            </div>
+            <div id="lista-notificacoes-container" style="max-height: 250px; overflow-y: auto;"></div>
+          </div>
+        </div>
+
+        <div id="auth-header-action" style="display: inline-flex; align-items: center; gap: 0.3rem;"></div>
+      </div>
+    </header>
+
+    <div class="hero-banner">
+      <h1 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">Vitrine Acadêmica</h1>
+      <p style="font-size: 0.75rem; opacity: 0.9;">Explore projetos desenvolvidos por estudantes da instituição.</p>
+    </div>
+
+    <main style="padding: 1.25rem 1rem;">
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <input type="text" id="input-busca" class="form-input" placeholder="🔍 Pesquisar por título, autor ou tecnologia..." oninput="filtrarProjetosVitrine()">
+      </div>
+
+      <div style="display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.25rem; scrollbar-width: none;" id="categorias-container"></div>
+
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+        <span id="contador-vitrine" style="font-size: 0.72rem; font-weight: 800; color: var(--una-primary); background: var(--una-light); padding: 0.25rem 0.6rem; border-radius: 1rem; border: 1px solid var(--una-border-pink);">
+          0 de 0
+        </span>
+      </div>
+
+      <div id="vitrine-projetos-container"></div>
+
+      <div id="bar-paginacao-vitrine" class="pagination-bar" style="display: none;">
+        <button id="btn-vitrine-prev" class="page-btn" onclick="mudarPaginaVitrine(-1)">← Anterior</button>
+        <div id="numeros-paginas-vitrine" style="display: flex; gap: 0.3rem;"></div>
+        <button id="btn-vitrine-next" class="page-btn" onclick="mudarPaginaVitrine(1)">Próximo →</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let categoriaSelecionada = 'Todos';
+    let termoBusca = '';
+    let paginaVitrineAtual = parseInt(localStorage.getItem('ultimaPaginaVitrine_MostraPlus')) || 0;
+    let projetosFiltradosCache = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      verificarHeaderUsuario();
+      atualizarFiltrosCategorias();
+      carregarVitrine();
+      carregarNotificacoesUsuario();
+    });
+
+    function verificarHeaderUsuario() {
+      const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+      const containerAuth = document.getElementById('auth-header-action');
+      const containerSino = document.getElementById('container-sino-notificacoes');
+
+      if (!usuario) {
+        containerAuth.innerHTML = `<a href="login.html" class="header-btn-action" style="background: var(--una-primary); color: #FFF; border: none;">Entrar</a>`;
+        if (containerSino) containerSino.style.display = 'none';
+      } else if (usuario.perfil === 'professor') {
+        containerAuth.innerHTML = `<a href="validacao-professor.html" class="header-btn-action" style="background: var(--una-light); color: var(--una-primary); border: 1px solid var(--una-border-pink);">Painel ⚙️</a>`;
+        if (containerSino) containerSino.style.display = 'inline-flex';
+      } else {
+        containerAuth.innerHTML = `
+          <a href="cadastro-projeto.html" class="header-btn-action" style="background: var(--una-light); color: var(--una-primary); border: 1px solid var(--una-border-pink);">+ Novo Projeto</a>
+          <a href="perfil-aluno.html" class="header-btn-action" style="background: var(--una-light); color: var(--una-primary); border: 1px solid var(--una-border-pink);">Painel ⚙️</a>
+        `;
+        if (containerSino) containerSino.style.display = 'inline-flex';
+      }
+    }
+
+    function atualizarFiltrosCategorias() {
+      const listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      const aprovados = listaProjetos.filter(p => p.status === 'Aprovado');
+
+      const categoriasUnicas = [...new Set(aprovados.map(p => p.categoria).filter(Boolean))];
+      const containerCat = document.getElementById('categorias-container');
+      
+      let html = `<button class="filter-btn ${categoriaSelecionada === 'Todos' ? 'active' : ''}" onclick="filtrarCategoria('Todos', this)">Todos</button>`;
+      
+      categoriasUnicas.forEach(cat => {
+        const isActive = (categoriaSelecionada === cat) ? 'active' : '';
+        html += `<button class="filter-btn ${isActive}" onclick="filtrarCategoria('${cat}', this)">${cat}</button>`;
+      });
+
+      containerCat.innerHTML = html;
+    }
+
+    function filtrarCategoria(cat, elementoBtn) {
+      categoriaSelecionada = cat;
+      paginaVitrineAtual = 0;
+      localStorage.setItem('ultimaPaginaVitrine_MostraPlus', 0);
+
+      document.querySelectorAll('#categorias-container .filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      elementoBtn.classList.add('active');
+
+      carregarVitrine();
+    }
+
+    function filtrarProjetosVitrine() {
+      termoBusca = document.getElementById('input-busca').value.toLowerCase().trim();
+      paginaVitrineAtual = 0;
+      localStorage.setItem('ultimaPaginaVitrine_MostraPlus', 0);
+      carregarVitrine();
+    }
+
+    function extrairUrlImagemVitrine(item) {
+      if (!item) return '';
+      if (typeof item === 'string') return item.trim();
+      if (typeof item === 'object') {
+        if (item.url) return String(item.url).trim();
+        if (item.src) return String(item.src).trim();
+        if (item.base64) return String(item.base64).trim();
+      }
+      return '';
+    }
+
+    function carregarVitrine() {
+      const container = document.getElementById('vitrine-projetos-container');
+      const barPaginacao = document.getElementById('bar-paginacao-vitrine');
+      const contadorVitrine = document.getElementById('contador-vitrine');
+      const listaProjetos = JSON.parse(localStorage.getItem('projetosMostraPlus')) || [];
+      const contas = JSON.parse(localStorage.getItem('contasMostraPlus')) || [];
+
+      atualizarFiltrosCategorias();
+
+      const aprovados = listaProjetos.filter(p => p.status === 'Aprovado');
+
+      projetosFiltradosCache = aprovados.filter(p => {
+        let autorNome = p.participantes || '';
+        if (p.emailContato) {
+          const contaAluno = contas.find(c => c.email === p.emailContato);
+          if (contaAluno && contaAluno.nome) autorNome = contaAluno.nome;
+        }
+
+        const matchCat = (categoriaSelecionada === 'Todos' || p.categoria === categoriaSelecionada);
+        const matchBusca = (
+          p.titulo.toLowerCase().includes(termoBusca) ||
+          p.descricao.toLowerCase().includes(termoBusca) ||
+          autorNome.toLowerCase().includes(termoBusca)
+        );
+        return matchCat && matchBusca;
+      });
+
+      if (projetosFiltradosCache.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem 1rem; background: #FFF; border-radius: 1rem; border: 1px solid var(--border-color);">
+            <p style="font-weight: 700; color: var(--text-main);">Nenhum projeto encontrado.</p>
+          </div>
+        `;
+        barPaginacao.style.display = 'none';
+        contadorVitrine.textContent = '0 de 0';
+        return;
+      }
+
+      const totalPaginas = projetosFiltradosCache.length;
+      if (paginaVitrineAtual >= totalPaginas) paginaVitrineAtual = totalPaginas - 1;
+      if (paginaVitrineAtual < 0) paginaVitrineAtual = 0;
+
+      localStorage.setItem('ultimaPaginaVitrine_MostraPlus', paginaVitrineAtual);
+
+      const p = projetosFiltradosCache[paginaVitrineAtual];
+
+      let autorNome = p.participantes;
+      if (p.emailContato) {
+        const contaAluno = contas.find(c => c.email === p.emailContato);
+        if (contaAluno && contaAluno.nome) autorNome = contaAluno.nome;
+      }
+
+      const logoUrl = extrairUrlImagemVitrine(p.logo);
+      const capaHtml = logoUrl ? `
+        <div style="width: 100%; height: 180px; background: #FAFAFA; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0.5rem;">
+          <img src="${logoUrl}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.style.display='none'" />
+        </div>
+      ` : '';
+
+      container.innerHTML = `
+        <div style="background: #FFF; border: 1px solid var(--border-color); border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+          ${capaHtml}
+          <div style="padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <span class="badge-tag">${p.categoria || 'Geral'}</span>
+            </div>
+
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--una-vinho); margin-bottom: 0.3rem;">${p.titulo}</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.6rem;">Publicado Por: <strong>${autorNome}</strong></p>
+            <p style="font-size: 0.8rem; color: #444; line-height: 1.4; margin-bottom: 1rem;">${p.descricao}</p>
+            
+            <a href="detalhe-projeto.html?id=${p.id}&pag=${paginaVitrineAtual}" class="btn-submit" style="display: block; text-align: center; text-decoration: none; padding: 0.6rem; font-size: 0.8rem;">Ver Detalhes do Projeto →</a>
+          </div>
+        </div>
+      `;
+
+      contadorVitrine.textContent = `Projeto ${paginaVitrineAtual + 1} de ${totalPaginas}`;
+
+      if (totalPaginas > 1) {
+        barPaginacao.style.display = 'flex';
+        document.getElementById('btn-vitrine-prev').disabled = (paginaVitrineAtual === 0);
+        document.getElementById('btn-vitrine-next').disabled = (paginaVitrineAtual === totalPaginas - 1);
+
+        const numContainer = document.getElementById('numeros-paginas-vitrine');
+        numContainer.innerHTML = Array.from({ length: totalPaginas }, (_, idx) => `
+          <button class="page-number-btn ${idx === paginaVitrineAtual ? 'active' : ''}" onclick="irParaPaginaVitrine(${idx})">
+            ${idx + 1}
+          </button>
+        `).join('');
+      } else {
+        barPaginacao.style.display = 'none';
+      }
+    }
+
+    function mudarPaginaVitrine(delta) {
+      const totalPaginas = projetosFiltradosCache.length;
+      const novaPagina = paginaVitrineAtual + delta;
+      if (novaPagina >= 0 && novaPagina < totalPaginas) {
+        paginaVitrineAtual = novaPagina;
+        localStorage.setItem('ultimaPaginaVitrine_MostraPlus', paginaVitrineAtual);
+        carregarVitrine();
+      }
+    }
+
+    function irParaPaginaVitrine(index) {
+      const totalPaginas = projetosFiltradosCache.length;
+      if (index >= 0 && index < totalPaginas) {
+        paginaVitrineAtual = index;
+        localStorage.setItem('ultimaPaginaVitrine_MostraPlus', paginaVitrineAtual);
+        carregarVitrine();
+      }
+    }
+
+    function alternarCaixaNotificacoes() {
+      const box = document.getElementById('box-notificacoes');
+      if (box) {
+        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+      }
+    }
+
+    function carregarNotificacoesUsuario() {
+      const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+      if (!usuarioLogado || !usuarioLogado.email) return;
+
+      const todasNotificacoes = JSON.parse(localStorage.getItem('notificacoesMostraPlus')) || [];
+      const minhasNotificacoes = todasNotificacoes.filter(n => {
+        const emailDestino = (n.emailDestinatario || '').toLowerCase();
+        const emailUser = usuarioLogado.email.toLowerCase();
+        
+        if (usuarioLogado.perfil === 'professor') {
+          return emailDestino === emailUser || n.tipo === 'novo_projeto' || n.tipo === 'submissao_professor';
+        }
+        return emailDestino === emailUser;
+      });
+
+      const container = document.getElementById('lista-notificacoes-container');
+      const badge = document.getElementById('badge-notificacoes');
+      const naoLidas = minhasNotificacoes.filter(n => !n.lida).length;
+
+      if (badge) {
+        if (naoLidas > 0) {
+          badge.textContent = naoLidas;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      if (!container) return;
+
+      if (minhasNotificacoes.length === 0) {
+        container.innerHTML = `<p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 1rem 0;">Nenhuma notificação por enquanto.</p>`;
+        return;
+      }
+
+      container.innerHTML = minhasNotificacoes.map(n => `
+        <div onclick="abrirNotificacao('${n.id}', '${n.projetoId || ''}')" style="padding: 0.65rem; border-radius: 0.5rem; background: ${n.lida ? '#FAFAFA' : 'var(--una-light, #FDF0F5)'}; border: 1px solid ${n.lida ? '#E2E8F0' : 'var(--una-border-pink, #F3D3E0)'}; margin-bottom: 0.5rem; cursor: pointer; transition: background 0.2s;">
+          <p style="font-size: 0.75rem; font-weight: 700; color: var(--una-vinho, #3B0033); margin-bottom: 0.15rem;">💬 ${n.tituloProjeto ? 'Notificação em "' + n.tituloProjeto + '"' : 'Notificação do Sistema'}</p>
+          <p style="font-size: 0.72rem; color: #444; margin-bottom: 0.2rem; line-height: 1.3;">${n.comentarioTexto || ''}</p>
+          <span style="font-size: 0.65rem; color: var(--text-muted);">${n.data}</span>
+        </div>
+      `).join('');
+    }
+
+    function abrirNotificacao(notificacaoId, projetoId) {
+      let todasNotificacoes = JSON.parse(localStorage.getItem('notificacoesMostraPlus')) || [];
+      const idx = todasNotificacoes.findIndex(n => String(n.id) === String(notificacaoId));
+
+      if (idx !== -1) {
+        todasNotificacoes[idx].lida = true;
+        localStorage.setItem('notificacoesMostraPlus', JSON.stringify(todasNotificacoes));
+      }
+
+      const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+
+      if (usuarioLogado && usuarioLogado.perfil === 'professor' && projetoId) {
+        window.location.href = `validacao-professor.html?id=${projetoId}`;
+      } else if (projetoId) {
+        window.location.href = `detalhe-projeto.html?id=${projetoId}&pag=${paginaVitrineAtual}`;
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function marcarTodasComoLidas() {
+      const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+      if (!usuarioLogado) return;
+
+      let todasNotificacoes = JSON.parse(localStorage.getItem('notificacoesMostraPlus')) || [];
+      const emailUser = usuarioLogado.email.toLowerCase();
+
+      todasNotificacoes.forEach(n => {
+        const emailDestino = (n.emailDestinatario || '').toLowerCase();
+        
+        const pertenceAoProfessor = (usuarioLogado.perfil === 'professor') && 
+          (emailDestino === emailUser || n.tipo === 'novo_projeto' || n.tipo === 'submissao_professor');
+
+        if (emailDestino === emailUser || pertenceAoProfessor) {
+          n.lida = true;
+        }
+      });
+
+      localStorage.setItem('notificacoesMostraPlus', JSON.stringify(todasNotificacoes));
+      carregarNotificacoesUsuario();
+    }
+  </script>
+
+</body>
+</html>
