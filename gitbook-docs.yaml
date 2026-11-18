@@ -20,15 +20,3 @@ site:
               default: true
               content:
                 directory: ./ficha_de_inscricao
-        - type: section
-          key: section-2
-          title: Vision_Board
-          path: vision_board
-          children:
-            - type: space
-              key: space-2
-              title: Vision_Board
-              path: vision_board
-              default: true
-              content:
-                directory: ./vision_board
