@@ -2,4 +2,4 @@
 
 * [Vitrine Virtual Expouna](README.md)
 * [Documentação](documentacao.md)
-* [Agradecimentos](agradecimentos.md)
+* [Documentação](documentacao-1.md)
